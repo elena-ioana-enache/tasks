@@ -1,19 +1,28 @@
-import { Task } from "../../interfaces/Tasks";
-import { Button, FormControl, InputLabel, MenuItem, TextField } from "@mui/material";
+import { Task, TaskStatus } from "../../interfaces/Tasks";
+import { FormControl, Grid, InputLabel, MenuItem, TextField } from "@mui/material";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { DatePicker, LocalizationProvider } from '@mui/lab';
+import { DatePicker, LoadingButton, LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import { Box } from "@mui/system";
 import { useState } from "react";
+import { useUpdateTaskMutation, useDeleteTaskMutation } from "../../state/services/tasks";
 
 interface Props {
   task: Task;
 }
 const TaskWidget = ({ task }: Props) => {
-  const { name, description, status } = task;
-  const [date, setDate] = useState<string | null>(task.date);
-  const handleChange = (event: SelectChangeEvent<"done" | "toDo" | "doing">) => {
-    console.log(event);
+  const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
+  const [deleteTask] = useDeleteTaskMutation();
+  const [taskDetail, setTaskDetail] = useState<Task>(task);
+
+  const handleChange = (event: SelectChangeEvent<TaskStatus>) => {
+    setTaskDetail({ ...taskDetail, status: event.target.value as TaskStatus })
+  }
+  const onUpdate = async () => {
+    await updateTask({ task: taskDetail });
+  }
+  const onDelete = async () => {
+    await deleteTask({ id: taskDetail.id })
   }
   return (
     <Box sx={{
@@ -30,8 +39,9 @@ const TaskWidget = ({ task }: Props) => {
         <TextField
           label="Name"
           variant="outlined"
-          value={name}
+          value={taskDetail.name}
           fullWidth
+          onChange={(e) => setTaskDetail({ ...taskDetail, name: e.target.value })}
         />
       </Box>
       <Box sx={{ mb: 2 }}>
@@ -40,18 +50,19 @@ const TaskWidget = ({ task }: Props) => {
           multiline
           rows={3}
           variant="outlined"
-          value={description}
+          value={taskDetail.description}
           fullWidth
+          onChange={(e) => setTaskDetail({ ...taskDetail, description: e.target.value })}
         />
       </Box>
       <Box sx={{ mb: 2 }}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DatePicker
             label="Date"
-            value={date}
+            value={taskDetail.date}
             inputFormat="yyyy-MM-dd"
             onChange={(newValue) => {
-              setDate(newValue);
+              newValue && setTaskDetail({ ...taskDetail, date: newValue });
             }}
             renderInput={(params) => <TextField {...params} />}
           />
@@ -61,7 +72,7 @@ const TaskWidget = ({ task }: Props) => {
         <FormControl sx={{ minWidth: '100%' }}>
           <InputLabel>Status</InputLabel>
           <Select
-            value={status}
+            value={taskDetail.status}
             label="Status"
             fullWidth
             onChange={handleChange}
@@ -72,10 +83,14 @@ const TaskWidget = ({ task }: Props) => {
           </Select>
         </FormControl>
       </Box>
-      <Box sx={{ mb: 2 }}>
-        <Button variant="outlined">Update</Button>
-        <Button variant="contained">Delete</Button>
-      </Box>
+      <Grid container spacing={0.3}>
+        <Grid item xs={6}>
+          <LoadingButton variant="outlined" onClick={onUpdate} loading={isUpdating}>Update</LoadingButton>
+        </Grid>
+        <Grid item xs={6}>
+          <LoadingButton variant="contained" onClick={onDelete}>Delete</LoadingButton>
+        </Grid>
+      </Grid>
     </Box>)
 }
 export default TaskWidget;
