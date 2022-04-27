@@ -1,8 +1,14 @@
 .container {
   display: flex;
-  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-start;
+  position: relative;
 }
-
+.delete{
+  position: absolute;
+  right: 43px;
+  top: -12px;
+}
 .status {
   background-color: #F0F0F0;
   border: 1px solid;

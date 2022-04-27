@@ -1,13 +1,6 @@
 {
   "tasks": [
     {
-      "id": 1,
-      "name": "read book in EN",
-      "description": "How I meet Elize",
-      "date": "2020-09-30T00:00:00.000Z",
-      "status": "doing"
-    },
-    {
       "id": 2,
       "name": "meet old friend",
       "description": "In the old town",
@@ -16,7 +9,7 @@
     },
     {
       "id": 3,
-      "name": "meet old friend",
+      "name": "read more about react",
       "description": "In the old town",
       "date": "2022-09-17",
       "status": "toDo"

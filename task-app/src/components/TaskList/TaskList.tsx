@@ -12,7 +12,7 @@ const TaskList = () => {
       <Grid container spacing={0.3}>
         {
           data ? data.map(task =>
-            <Grid item xs={2} key={task.id}>
+            <Grid item xs={3} key={task.id}>
               <TaskWidget task={task} key={task.id} />
             </Grid>
           ) : null}
