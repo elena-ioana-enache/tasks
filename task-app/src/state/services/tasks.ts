@@ -6,7 +6,7 @@ type TasksResponse = Task[];
 export const getTasksApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:4000/" }),
   endpoints: (build) => ({
-    getTasksList: build.query<TasksResponse, void>({
+    getTasks: build.mutation<TasksResponse, void>({
       query: () => "tasks",
     }),
     updateTask: build.mutation<TasksResponse, { task: Task }>({
@@ -25,4 +25,4 @@ export const getTasksApi = createApi({
   }),
 });
 // Export hooks for usage in functional components
-export const { useGetTasksListQuery, useUpdateTaskMutation, useDeleteTaskMutation } = getTasksApi;
+export const { useUpdateTaskMutation, useDeleteTaskMutation, useGetTasksMutation } = getTasksApi;

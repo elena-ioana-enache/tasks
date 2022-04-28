@@ -1,16 +1,18 @@
 import { CircularProgress, Grid } from '@mui/material';
 import styles from './App.module.scss';
 import TaskList from './components/TaskList/TaskList';
-import { useGetTasksListQuery } from './state/services/tasks';
+import { useFetchTasks } from './hooks/useFetchTasks';
+
 
 function App() {
 
-  const { error, isLoading: isTaksListLoading } = useGetTasksListQuery();
+  const { isTaskListLoading, isError } = useFetchTasks();
+
   return (
     <div className={styles.container}>
-      {error ? (
+      {isError ? (
         <>Oh no, there was an error</>
-      ) : isTaksListLoading ? (
+      ) : isTaskListLoading ? (
         <Grid container>
           <Grid item xs={12} p={30}>
             <CircularProgress color="primary" size="13rem" />

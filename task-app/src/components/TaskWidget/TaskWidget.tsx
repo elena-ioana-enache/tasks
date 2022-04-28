@@ -1,29 +1,40 @@
 import { Task, TaskStatus } from "../../interfaces/Tasks";
-import { FormControl, Grid, IconButton, InputLabel, MenuItem, TextField } from "@mui/material";
+import { FormControl, IconButton, InputLabel, MenuItem, TextField } from "@mui/material";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { DatePicker, LoadingButton, LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import { Box } from "@mui/system";
 import { useUpdateTaskMutation, useDeleteTaskMutation } from "../../state/services/tasks";
 import CloseIcon from '@mui/icons-material/Close';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from './TaskWidget.module.scss';
+import { useAppDispatch } from "../../hooks/redux.hook";
+import { setFetch } from "../../state/services/task.reducer";
+
 interface Props {
   task: Task;
 }
+
 const TaskWidget = ({ task }: Props) => {
+  const dispatch = useAppDispatch();
   const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
   const [taskDetail, setTaskDetail] = useState<Task>(task);
+  useEffect(() => {
+    setTaskDetail(task);
+  }, [task]);
 
   const handleChange = (event: SelectChangeEvent<TaskStatus>) => {
     setTaskDetail({ ...taskDetail, status: event.target.value as TaskStatus })
   }
   const onUpdate = async () => {
     await updateTask({ task: taskDetail });
+
+    dispatch(setFetch(true));
   }
   const onDelete = async () => {
-    await deleteTask({ id: taskDetail.id })
+    await deleteTask({ id: taskDetail.id });
+    dispatch(setFetch(true));
   }
   return (
     <div className={styles.container}>

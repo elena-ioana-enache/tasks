@@ -1,10 +1,10 @@
 import { Grid, Typography } from '@mui/material';
-import { useGetTasksListQuery } from '../../state/services/tasks';
+import { useTasks } from '../../state/services/task.selector';
 import TaskWidget from '../TaskWidget/TaskWidget';
 import styles from './TaskList.module.scss';
 
 const TaskList = () => {
-  const { data } = useGetTasksListQuery();
+  const data = useTasks();
 
   return (
     <div className={styles.container}>

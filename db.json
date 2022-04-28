@@ -1,39 +1,32 @@
 {
   "tasks": [
     {
+      "id": 1,
+      "name": "react",
+      "description": "now improving",
+      "date": "2022-09-30T00:00:00.000Z",
+      "status": "doing"
+    },
+    {
       "id": 2,
-      "name": "meet old friend",
-      "description": "In the old town",
-      "date": "2022-09-17",
+      "name": "react",
+      "description": "now improving in a way",
+      "date": "2022-09-30T00:00:00.000Z",
       "status": "toDo"
     },
     {
       "id": 3,
-      "name": "read more about react",
-      "description": "In the old town",
-      "date": "2022-09-17",
-      "status": "toDo"
+      "name": "react",
+      "description": "now improving",
+      "date": "2022-09-30T00:00:00.000Z",
+      "status": "doing"
     },
     {
       "id": 4,
-      "name": "meet old friend",
-      "description": "In the old town",
-      "date": "2022-09-17",
-      "status": "toDo"
-    },
-    {
-      "id": 5,
-      "name": "meet old friend",
-      "description": "In the old town",
-      "date": "2022-09-17",
-      "status": "toDo"
-    },
-    {
-      "id": 6,
-      "name": "meet old friend",
-      "description": "In the old town",
-      "date": "2022-09-17",
-      "status": "toDo"
+      "name": "react",
+      "description": "now improving",
+      "date": "2022-09-30T00:00:00.000Z",
+      "status": "doing"
     }
   ]
 }

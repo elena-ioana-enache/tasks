@@ -1,12 +1,13 @@
 import { Task } from "./../../interfaces/Tasks";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getTasksApi } from "./tasks";
 
 export interface TaskInterface {
   tasks: Task[] | null;
+  fetch: boolean;
 }
 export const taskInitialState: TaskInterface = {
   tasks: null,
+  fetch: true,
 };
 const taskReducer = createSlice({
   name: "TASK",
@@ -15,17 +16,13 @@ const taskReducer = createSlice({
     setTasksAction(state: TaskInterface, action: PayloadAction<Task[]>) {
       state.tasks = action.payload;
     },
+    setFetch(state: TaskInterface, action: PayloadAction<boolean>) {
+      state.fetch = action.payload;
+    },
   },
-  extraReducers: (builder) => {
-    builder.addMatcher(
-      getTasksApi.endpoints.getTasksList.matchFulfilled,
-      (state, action) => {
-        state.tasks = action.payload;
-      }
-    );
-  },
+
 });
 
-export const { setTasksAction } = taskReducer.actions;
+export const { setTasksAction, setFetch } = taskReducer.actions;
 
 export default taskReducer.reducer;
