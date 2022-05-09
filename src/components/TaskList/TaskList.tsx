@@ -11,9 +11,9 @@ const TaskList = () => {
       <Typography variant='h4'>Tasks List</Typography>
       <Grid container spacing={0.3}>
         {
-          data ? data.map(task =>
-            <Grid item xs={3} key={task.id}>
-              <TaskWidget task={task} key={task.id} />
+          data ? data.map((task, id) =>
+            <Grid item xs={3} key={id}>
+              <TaskWidget task={task} key={id} />
             </Grid>
           ) : null}
       </Grid>
