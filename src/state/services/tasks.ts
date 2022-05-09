@@ -9,14 +9,14 @@ export const getTasksApi = createApi({
     getTasks: build.mutation<TasksResponse, void>({
       query: () => "tasks.json",
     }),
-    updateTask: build.mutation<TasksResponse, { task: Task }>({
-      query: ({ task }) => ({
-        url: `tasks/${task.id}.json`,
+    updateTask: build.mutation<TasksResponse, { task: Task, id: string }>({
+      query: ({ task, id }) => ({
+        url: `tasks/${id}.json`,
         method: 'PUT',
         body: task,
       }),
     }),
-    deleteTask: build.mutation<TasksResponse, { id: number }>({
+    deleteTask: build.mutation<TasksResponse, { id: string }>({
       query: ({ id }) => ({
         url: `tasks/${id}.json`,
         method: 'DELETE',

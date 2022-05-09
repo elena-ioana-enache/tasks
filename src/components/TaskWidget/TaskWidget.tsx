@@ -13,9 +13,10 @@ import { setFetch } from "../../state/services/task.reducer";
 
 interface Props {
   task: Task;
+  id: string;
 }
 
-const TaskWidget = ({ task }: Props) => {
+const TaskWidget = ({ task, id }: Props) => {
   const dispatch = useAppDispatch();
   const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
@@ -28,12 +29,12 @@ const TaskWidget = ({ task }: Props) => {
     setTaskDetail({ ...taskDetail, status: event.target.value as TaskStatus })
   }
   const onUpdate = async () => {
-    await updateTask({ task: taskDetail });
+    await updateTask({ task: taskDetail, id: id });
 
     dispatch(setFetch(true));
   }
   const onDelete = async () => {
-    await deleteTask({ id: taskDetail.id });
+    await deleteTask({ id: id });
     dispatch(setFetch(true));
   }
   return (
