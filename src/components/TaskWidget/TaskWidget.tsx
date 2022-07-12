@@ -1,15 +1,14 @@
 import { Task, TaskStatus } from "../../interfaces/Tasks";
-import { FormControl, IconButton, InputLabel, MenuItem, TextField } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, TextField } from "@mui/material";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { DatePicker, LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import { Box } from "@mui/system";
-import { useUpdateTaskMutation, useDeleteTaskMutation } from "../../state/services/tasks";
-import CloseIcon from '@mui/icons-material/Close';
+import { useUpdateTaskMutation } from "../../state/services/tasks";
 import { useEffect, useState } from "react";
 import styles from './TaskWidget.module.scss';
-import { useAppDispatch } from "../../hooks/redux.hook";
-import { setFetch } from "../../state/services/task.reducer";
+
+import DeleteWidget from "../DeleteWidget/DeleteWidget";
 
 interface Props {
   task: Task;
@@ -17,9 +16,7 @@ interface Props {
 }
 
 const TaskWidget = ({ task, id }: Props) => {
-  const dispatch = useAppDispatch();
   const [updateTask] = useUpdateTaskMutation();
-  const [deleteTask] = useDeleteTaskMutation();
   const [taskDetail, setTaskDetail] = useState<Task>(task);
 
   useEffect(() => {
@@ -54,10 +51,7 @@ const TaskWidget = ({ task, id }: Props) => {
     await updateTask({ task: task, id: id });
   }
 
-  const onDelete = async () => {
-    await deleteTask({ id: id });
-    dispatch(setFetch(true));
-  }
+
 
   return (
     <div className={styles.container}>
@@ -73,11 +67,7 @@ const TaskWidget = ({ task, id }: Props) => {
           borderRadius: 2,
           position: 'relative'
         }}>
-        <div className={styles.delete}>
-          <IconButton aria-label="close" onClick={onDelete}>
-            <CloseIcon sx={{ "&:hover": { color: "blue" } }} />
-          </IconButton>
-        </div>
+        <DeleteWidget task={taskDetail} />
         <Box sx={{ mb: 2 }}>
           <TextField
             label="Name"
@@ -125,10 +115,7 @@ const TaskWidget = ({ task, id }: Props) => {
           </FormControl>
         </Box>
 
-      </Box>
-
-
-    </div>
+      </Box>    </div>
   )
 }
 export default TaskWidget;
