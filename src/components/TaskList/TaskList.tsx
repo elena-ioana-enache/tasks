@@ -7,14 +7,13 @@ const TaskList = () => {
   const data = useTasks();
   const keysArray = data && Object.keys(data);
   const valuesArray = data && Object.values(data);
-
   return (
     <div className={styles.container}>
       <Typography variant='h4'>Tasks List</Typography>
-      <Grid container spacing={0.3}>
+      <Grid container spacing={0.3} className={styles.grid}>
         {
           data ? keysArray.map((key, index) =>
-            <Grid item xs={3} key={key}>
+            <Grid item xs='auto' key={key}>
               <TaskWidget task={valuesArray[index]} key={key} id={key} />
             </Grid>
           ) : null}
