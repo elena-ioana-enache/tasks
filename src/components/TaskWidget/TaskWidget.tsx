@@ -1,7 +1,7 @@
 import { Task, TaskStatus } from "../../interfaces/Tasks";
 import { FormControl, IconButton, InputLabel, MenuItem, TextField } from "@mui/material";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { DatePicker, LoadingButton, LocalizationProvider } from '@mui/lab';
+import { DatePicker, LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import { Box } from "@mui/system";
 import { useUpdateTaskMutation, useDeleteTaskMutation } from "../../state/services/tasks";
@@ -18,44 +18,73 @@ interface Props {
 
 const TaskWidget = ({ task, id }: Props) => {
   const dispatch = useAppDispatch();
-  const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
+  const [updateTask] = useUpdateTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
   const [taskDetail, setTaskDetail] = useState<Task>(task);
+
   useEffect(() => {
     setTaskDetail(task);
   }, [task]);
 
-  const handleChange = (event: SelectChangeEvent<TaskStatus>) => {
-    setTaskDetail({ ...taskDetail, status: event.target.value as TaskStatus })
+  const onChangeName = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const taskTemp = { ...taskDetail, name: e.target.value || '' };
+    onUpdate(taskTemp);
   }
-  const onUpdate = async () => {
-    await updateTask({ task: taskDetail, id: id });
 
-    dispatch(setFetch(true));
+  const onChangeDescription = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const taskTemp = { ...taskDetail, description: e.target.value };
+    onUpdate(taskTemp);
   }
+
+  const onChangeDate = async (date: string | null, keyboardInputValue?: string | undefined) => {
+    // @ts-ignore:next-line
+    if (date instanceof Date && isFinite(date)) {
+      const taskTemp = { ...taskDetail, date: date };
+      onUpdate(taskTemp);
+    }
+  }
+
+  const onChangeStatus = async (event: SelectChangeEvent<TaskStatus>) => {
+    const taskTemp = { ...taskDetail, status: event.target.value as TaskStatus };
+    onUpdate(taskTemp);
+  }
+
+  const onUpdate = async (task: Task) => {
+    setTaskDetail(task);
+    await updateTask({ task: task, id: id });
+  }
+
   const onDelete = async () => {
     await deleteTask({ id: id });
     dispatch(setFetch(true));
   }
+
   return (
     <div className={styles.container}>
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        m: 1,
-        p: 2,
-        border: 1,
-        borderColor: '#F0F0F0',
-        borderRadius: 2,
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          m: 1,
+          p: 2,
+          border: 1,
+          borderColor: '#F0F0F0',
+          borderRadius: 2,
+          position: 'relative'
+        }}>
+        <div className={styles.delete}>
+          <IconButton aria-label="close" onClick={onDelete}>
+            <CloseIcon sx={{ "&:hover": { color: "blue" } }} />
+          </IconButton>
+        </div>
         <Box sx={{ mb: 2 }}>
           <TextField
             label="Name"
             variant="outlined"
             value={taskDetail.name}
             fullWidth
-            onChange={(e) => setTaskDetail({ ...taskDetail, name: e.target.value })}
+            onChange={onChangeName}
           />
         </Box>
         <Box sx={{ mb: 2 }}>
@@ -66,7 +95,7 @@ const TaskWidget = ({ task, id }: Props) => {
             variant="outlined"
             value={taskDetail.description}
             fullWidth
-            onChange={(e) => setTaskDetail({ ...taskDetail, description: e.target.value })}
+            onChange={onChangeDescription}
           />
         </Box>
         <Box sx={{ mb: 2 }}>
@@ -75,9 +104,7 @@ const TaskWidget = ({ task, id }: Props) => {
               label="Date"
               value={taskDetail.date}
               inputFormat="yyyy-MM-dd"
-              onChange={(newValue) => {
-                newValue && setTaskDetail({ ...taskDetail, date: newValue });
-              }}
+              onChange={onChangeDate}
               renderInput={(params) => <TextField {...params} />}
             />
           </LocalizationProvider>
@@ -89,7 +116,7 @@ const TaskWidget = ({ task, id }: Props) => {
               value={taskDetail.status}
               label="Status"
               fullWidth
-              onChange={handleChange}
+              onChange={onChangeStatus}
             >
               <MenuItem value='toDo'>To Do</MenuItem>
               <MenuItem value='doing'>Doing</MenuItem>
@@ -97,19 +124,10 @@ const TaskWidget = ({ task, id }: Props) => {
             </Select>
           </FormControl>
         </Box>
-        <Box>
-          <LoadingButton
-            variant="contained"
-            onClick={onUpdate}
-            loading={isUpdating}
-          >Update
-          </LoadingButton>
-        </Box>
+
       </Box>
 
-      <IconButton aria-label="close" onClick={onDelete} className={styles.delete}>
-        <CloseIcon sx={{ "&:hover": { color: "blue" } }} />
-      </IconButton>
+
     </div>
   )
 }
