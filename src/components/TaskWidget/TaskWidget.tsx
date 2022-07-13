@@ -5,7 +5,7 @@ import { DatePicker, LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import { Box } from "@mui/system";
 import { useUpdateTaskMutation } from "../../state/services/tasks";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from './TaskWidget.module.scss';
 
 import DeleteWidget from "../DeleteWidget/DeleteWidget";
@@ -13,27 +13,20 @@ import { setNewTask } from "../../state/services/task.reducer";
 import { useAppDispatch } from "../../hooks/redux.hook";
 
 interface Props {
-  task?: Task;
+  task: Task;
   id?: string;
 }
 
 const TaskWidget = ({ task, id }: Props) => {
   const [updateTask] = useUpdateTaskMutation();
   const dispatch = useAppDispatch();
-  const newTask = useMemo(() => {
-    return {
-      name: '',
-      description: '',
-      date: (new Date()).toDateString(),
-      status: "toDo" as TaskStatus,
-    };
-  }, []);
 
-  const [taskDetail, setTaskDetail] = useState<Task>(task || newTask);
+
+  const [taskDetail, setTaskDetail] = useState<Task>(task);
 
   useEffect(() => {
-    setTaskDetail(task || newTask);
-  }, [task, newTask]);
+    setTaskDetail(task);
+  }, [task]);
 
   const onChangeName = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const taskTemp = { ...taskDetail, name: e.target.value || '' };
@@ -66,9 +59,15 @@ const TaskWidget = ({ task, id }: Props) => {
       dispatch(setNewTask(task));
     }
   }
+  const firstRender = useRef(true);
 
-
-
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+  }, [firstRender]
+  );
   return (
     <div className={styles.container}>
       <Box
@@ -79,11 +78,11 @@ const TaskWidget = ({ task, id }: Props) => {
           m: 1,
           p: 2,
           border: 1,
-          borderColor: '#F0F0F0',
+          borderColor: id ? '#F0F0F0' : 'white',
           borderRadius: 2,
           position: 'relative'
         }}>
-        {id && <DeleteWidget id={id} name={taskDetail.name} />}
+        {id && <DeleteWidget id={id} name={taskDetail.name || ""} />}
         <Box sx={{ mb: 2 }}>
           <TextField
             label="Name"
@@ -91,6 +90,9 @@ const TaskWidget = ({ task, id }: Props) => {
             value={taskDetail.name}
             fullWidth
             onChange={onChangeName}
+            required
+            error={!firstRender.current && !taskDetail.name}
+            helperText={firstRender.current ? "" : !!taskDetail.name || "Name is required"}
           />
         </Box>
         <Box sx={{ mb: 2 }}>
@@ -131,7 +133,8 @@ const TaskWidget = ({ task, id }: Props) => {
           </FormControl>
         </Box>
 
-      </Box>    </div>
+      </Box>
+    </div>
   )
 }
 export default TaskWidget;
