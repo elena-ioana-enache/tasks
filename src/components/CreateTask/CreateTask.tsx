@@ -5,41 +5,34 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { useAppDispatch } from '../../hooks/redux.hook';
-import { useDeleteTaskMutation } from '../../state/services/tasks';
+import { useCreateTaskMutation } from '../../state/services/tasks';
 import { setFetch } from "../../state/services/task.reducer";
-import styles from './DeleteWidget.module.scss';
-interface Props {
-  id: string;
-  name: string;
-}
-const DeleteWidget = ({ id, name }: Props) => {
+import TaskWidget from '../TaskWidget/TaskWidget';
+import { useNewTask } from '../../state/services/task.selector';
+
+const CreateTask = () => {
   const [open, setOpen] = React.useState(false);
   const dispatch = useAppDispatch();
-  const [deleteTask] = useDeleteTaskMutation();
+  const newTask = useNewTask();
+  const [createTask] = useCreateTaskMutation();
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
-  const handleDelete = async () => {
-    onDelete();
-    handleClose();
+  const handleCreate = async () => {
+    if (newTask) {
+      await createTask({ task: newTask });
+      dispatch(setFetch(true));
+      handleClose();
+    }
   }
-  const onDelete = async () => {
-    await deleteTask({ id });
-    dispatch(setFetch(true));
-  }
+
   return (
     <div>
-      <div className={styles.delete}>
-        <IconButton aria-label="close" onClick={handleClickOpen}>
-          <CloseIcon sx={{ "&:hover": { color: "blue" } }} />
-        </IconButton>
-      </div>
+      <Button variant="outlined" onClick={handleClickOpen}>Add</Button>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -47,16 +40,16 @@ const DeleteWidget = ({ id, name }: Props) => {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Delete task?"}
+          {"Create task?"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {`Do you want to delete task "${name}"`}
+            <TaskWidget />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>No</Button>
-          <Button onClick={handleDelete} autoFocus>
+          <Button onClick={handleCreate} autoFocus>
             Yes
           </Button>
         </DialogActions>
@@ -64,4 +57,4 @@ const DeleteWidget = ({ id, name }: Props) => {
     </div>
   );
 }
-export default DeleteWidget;
+export default CreateTask;

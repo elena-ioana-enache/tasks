@@ -1,5 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import { useTasks } from '../../state/services/task.selector';
+import CreateTask from '../CreateTask/CreateTask';
 import TaskWidget from '../TaskWidget/TaskWidget';
 import styles from './TaskList.module.scss';
 
@@ -10,6 +11,7 @@ const TaskList = () => {
   return (
     <div className={styles.container}>
       <Typography variant='h4'>Tasks List</Typography>
+      <CreateTask />
       <Grid container spacing={0.3} className={styles.grid}>
         {
           data ? keysArray.map((key, index) =>

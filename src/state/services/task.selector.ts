@@ -7,3 +7,5 @@ export const useTasks = (): Task[] =>
 
 export const useFetch = (): boolean =>
   useAppSelector(state => state.taskReducer.fetch, shallowEqual);
+export const useNewTask = (): Task | null =>
+  useAppSelector(state => state.taskReducer.newTask, shallowEqual);

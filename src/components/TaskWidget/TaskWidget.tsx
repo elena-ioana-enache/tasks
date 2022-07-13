@@ -5,23 +5,35 @@ import { DatePicker, LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import { Box } from "@mui/system";
 import { useUpdateTaskMutation } from "../../state/services/tasks";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from './TaskWidget.module.scss';
 
 import DeleteWidget from "../DeleteWidget/DeleteWidget";
+import { setNewTask } from "../../state/services/task.reducer";
+import { useAppDispatch } from "../../hooks/redux.hook";
 
 interface Props {
-  task: Task;
-  id: string;
+  task?: Task;
+  id?: string;
 }
 
 const TaskWidget = ({ task, id }: Props) => {
   const [updateTask] = useUpdateTaskMutation();
-  const [taskDetail, setTaskDetail] = useState<Task>(task);
+  const dispatch = useAppDispatch();
+  const newTask = useMemo(() => {
+    return {
+      name: '',
+      description: '',
+      date: (new Date()).toDateString(),
+      status: "toDo" as TaskStatus,
+    };
+  }, []);
+
+  const [taskDetail, setTaskDetail] = useState<Task>(task || newTask);
 
   useEffect(() => {
-    setTaskDetail(task);
-  }, [task]);
+    setTaskDetail(task || newTask);
+  }, [task, newTask]);
 
   const onChangeName = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const taskTemp = { ...taskDetail, name: e.target.value || '' };
@@ -36,7 +48,7 @@ const TaskWidget = ({ task, id }: Props) => {
   const onChangeDate = async (date: string | null, keyboardInputValue?: string | undefined) => {
     // @ts-ignore:next-line
     if (date instanceof Date && isFinite(date)) {
-      const taskTemp = { ...taskDetail, date: date };
+      const taskTemp = { ...taskDetail, date: date.toDateString() };
       onUpdate(taskTemp);
     }
   }
@@ -48,7 +60,11 @@ const TaskWidget = ({ task, id }: Props) => {
 
   const onUpdate = async (task: Task) => {
     setTaskDetail(task);
-    await updateTask({ task: task, id: id });
+    if (id) {
+      await updateTask({ task: task, id: id });
+    } else {
+      dispatch(setNewTask(task));
+    }
   }
 
 
@@ -67,7 +83,7 @@ const TaskWidget = ({ task, id }: Props) => {
           borderRadius: 2,
           position: 'relative'
         }}>
-        <DeleteWidget task={taskDetail} />
+        {id && <DeleteWidget id={id} name={taskDetail.name} />}
         <Box sx={{ mb: 2 }}>
           <TextField
             label="Name"

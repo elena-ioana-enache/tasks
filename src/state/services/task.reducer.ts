@@ -4,10 +4,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface TaskInterface {
   tasks: Task[] | null;
   fetch: boolean;
+  newTask: Task | null;
 }
 export const taskInitialState: TaskInterface = {
   tasks: null,
   fetch: true,
+  newTask: null,
 };
 const taskReducer = createSlice({
   name: "TASK",
@@ -19,10 +21,13 @@ const taskReducer = createSlice({
     setFetch(state: TaskInterface, action: PayloadAction<boolean>) {
       state.fetch = action.payload;
     },
+    setNewTask(state: TaskInterface, action: PayloadAction<Task | null>) {
+      state.newTask = action.payload
+    }
   },
 
 });
 
-export const { setTasksAction, setFetch } = taskReducer.actions;
+export const { setTasksAction, setFetch, setNewTask } = taskReducer.actions;
 
 export default taskReducer.reducer;

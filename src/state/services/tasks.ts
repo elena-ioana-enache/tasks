@@ -16,6 +16,13 @@ export const getTasksApi = createApi({
         body: task,
       }),
     }),
+    createTask: build.mutation<TasksResponse, { task: Task }>({
+      query: ({ task }) => ({
+        url: `tasks.json`,
+        method: 'POST',
+        body: task,
+      }),
+    }),
     deleteTask: build.mutation<TasksResponse, { id: string }>({
       query: ({ id }) => ({
         url: `tasks/${id}.json`,
@@ -25,4 +32,4 @@ export const getTasksApi = createApi({
   }),
 });
 // Export hooks for usage in functional components
-export const { useUpdateTaskMutation, useDeleteTaskMutation, useGetTasksMutation } = getTasksApi;
+export const { useUpdateTaskMutation, useCreateTaskMutation, useDeleteTaskMutation, useGetTasksMutation } = getTasksApi;
